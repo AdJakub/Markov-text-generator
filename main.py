@@ -1,3 +1,4 @@
+import random
 import sys
 
 book_name = sys.argv[1]
@@ -21,6 +22,7 @@ for i in range(0, len(test_words) - 1):
     follower_lists[current_word].append(next_word)
 
     print(f"{current_word} -> {next_word}")
+
 # version B
 follower_counts = {}
 for i in range(0, len(test_words) - 1):
@@ -34,6 +36,11 @@ for i in range(0, len(test_words) - 1):
     follower_counts[current_word][next_word] += 1
 
 
-print(test_words, len(test_words))
-print(follower_lists)
-print(follower_counts)
+# print(test_words, len(test_words))
+# print(follower_lists)
+# print(follower_counts)
+
+weights_list = list(follower_counts["the"].values())
+options = list(follower_counts["the"].keys())
+picked = list(random.choices(options, weights=weights_list))
+print(picked[0])
