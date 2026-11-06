@@ -42,5 +42,25 @@ for i in range(0, len(test_words) - 1):
 
 weights_list = list(follower_counts["the"].values())
 options = list(follower_counts["the"].keys())
-picked = list(random.choices(options, weights=weights_list))
-print(picked[0])
+# print(picked[0])
+pick_counts = dict()
+# version B picking
+# for i in range(600):
+#   picked = list(random.choices(options, weights=weights_list))
+#  word = picked[0]
+# if word not in pick_counts:
+#    pick_counts[word] = 0
+# pick_counts[word] += 1
+
+# print(pick_counts)
+
+# version A picking
+pick_counts_b = dict()
+for i in range(600):
+    picked = random.choice(follower_lists["the"])
+    word = picked
+    if word not in pick_counts_b:
+        pick_counts_b[word] = 0
+    pick_counts_b[word] += 1
+
+print(pick_counts_b)
