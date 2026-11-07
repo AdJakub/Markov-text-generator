@@ -54,10 +54,11 @@ follower_counts = build_follower_counts(book_words)
 # print(test_words, len(test_words))
 # print(follower_lists)
 # print(follower_counts)
-print(len(follower_counts))
-print(len(follower_lists["the"]))
-print(len(follower_counts["the"]))
-print(sum(follower_counts["the"].values()))
+# print(len(follower_counts))
+# print(len(follower_lists["the"]))
+# print(len(follower_counts["the"]))
+# print(sum(follower_counts["the"].values()))
+print("is" in follower_lists)
 
 
 def get_count(pair):
@@ -66,7 +67,7 @@ def get_count(pair):
 
 the_pairs = list(follower_counts["the"].items())
 the_pairs.sort(key=get_count, reverse=True)
-print(the_pairs[:10])
+# print(the_pairs[:10])
 weights_list = list(follower_counts["the"].values())
 options = list(follower_counts["the"].keys())
 # print(picked[0])
@@ -87,3 +88,45 @@ for i in range(600):
     if word not in pick_counts_a:
         pick_counts_a[word] = 0
     pick_counts_a[word] += 1
+
+
+# generating text version A
+def generate_text(table, start_word, length):
+    current = start_word
+    generated = [start_word]
+    all_words = list(table.keys())
+    for i in range(length):
+        if current not in table:
+            current = random.choice(all_words)
+        next_word = random.choice(table[current])
+        generated.append(next_word)
+        current = next_word
+    result_seperator = " "
+    result = result_seperator.join(generated)
+    return result
+
+
+print("--- VERSION A ---")
+print(generate_text(follower_lists, "The", 20))
+
+
+# generating text version B
+def generate_text_weighted(table, start_word, length):
+    current = start_word
+    generated = [start_word]
+    all_words = list(table.keys())
+    for i in range(length):
+        if current not in table:
+            current = random.choice(all_words)
+        options = list(table[current].keys())
+        weights = list(table[current].values())
+        next_word = random.choices(options, weights=weights)[0]
+        generated.append(next_word)
+        current = next_word
+    result_seperator = " "
+    result = result_seperator.join(generated)
+    return result
+
+
+print("--- VERSION B ---")
+print(generate_text_weighted(follower_counts, "The", 20))
