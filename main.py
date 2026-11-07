@@ -23,6 +23,11 @@ parser.add_argument(
 parser.add_argument(
     "--count", type=int, default=1, help="Ammount of sentences to generate"
 )
+parser.add_argument(
+    "--experiment",
+    action="store_true",
+    help="run the copy-score tests and the min_options experiment",
+)
 args = parser.parse_args()
 
 
@@ -32,9 +37,7 @@ book_path = f"books/{book_name}"
 book_text = get_book_text(book_path)
 no_header = remove_header(book_text)
 book_words = no_header.split()
-book_chunk_set = book_chunks(book_words, 5)
-print(len(book_chunk_set))
-print(len(book_words))
+
 
 tables = get_tables(book_words, args.max_n)
 for _ in range(args.count):
@@ -42,11 +45,15 @@ for _ in range(args.count):
         tables, args.max_n, args.length, min_options=args.min_options
     )
     print(text)
-test_text = """On an exceptionally hot evening early in July a young man came out of
-the garret in which he lodged in S. Place and walked slowly, as though
-in hesitation,"""
-print("--- SANITY TEST ---")
-print(copy_score(test_text, book_chunk_set, 5))
-print("--- ACTUAL TEST --- ")
-print(copy_score(text, book_chunk_set, 5))
-tune_min_options(tables, range(1, 6), 30, book_chunk_set)
+if args.experiment:
+    book_chunk_set = book_chunks(book_words, 5)
+    print(len(book_chunk_set))
+    print(len(book_words))
+    test_text = """On an exceptionally hot evening early in July a young man came out of
+    the garret in which he lodged in S. Place and walked slowly, as though
+    in hesitation,"""
+    print("--- SANITY TEST ---")
+    print(copy_score(test_text, book_chunk_set, 5))
+    print("--- ACTUAL TEST --- ")
+    print(copy_score(text, book_chunk_set, 5))
+    tune_min_options(tables, range(1, 6), 30, book_chunk_set)
