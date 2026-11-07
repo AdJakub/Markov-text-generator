@@ -27,4 +27,4 @@ else:
     print(copy_score(test_text, book_chunk_set, 5))
     print("--- ACTUAL TEST --- ")
     print(copy_score(text, book_chunk_set, 5))
-    # tune_min_options(tables, range(1, 6), 30)
+    tune_min_options(tables, range(1, 6), 30, book_chunk_set)
