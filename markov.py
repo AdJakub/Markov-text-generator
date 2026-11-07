@@ -2,36 +2,6 @@ import random
 
 
 #  build the table
-def build_follower_counts(words):
-    follower_counts = {}
-    for i in range(0, len(words) - 1):
-        current_word = words[i]
-        next_word = words[i + 1]
-        if current_word not in follower_counts:
-            follower_counts[current_word] = dict()
-        if next_word not in follower_counts[current_word]:
-            follower_counts[current_word][next_word] = 0
-
-        follower_counts[current_word][next_word] += 1
-    return follower_counts
-
-
-def build_pair_counts(words):
-    pair_counts = {}
-    for i in range(0, len(words) - 2):
-        first_word = words[i]
-        second_word = words[i + 1]
-        current_pair = (first_word, second_word)
-        next_word = words[i + 2]
-        if current_pair not in pair_counts:
-            pair_counts[current_pair] = dict()
-        if next_word not in pair_counts[current_pair]:
-            pair_counts[current_pair][next_word] = 0
-
-        pair_counts[current_pair][next_word] += 1
-    return pair_counts
-
-
 def build_ngram_counts(words, n):
     ngram_counts = {}
     for i in range(0, len(words) - n):
@@ -47,41 +17,6 @@ def build_ngram_counts(words, n):
 
 
 # generating text
-def generate_text(table, start_word, length):
-    current = start_word
-    generated = [start_word]
-    all_words = list(table.keys())
-    for i in range(length):
-        if current not in table:
-            current = random.choice(all_words)
-        options = list(table[current].keys())
-        weights = list(table[current].values())
-        next_word = random.choices(options, weights=weights)[0]
-        generated.append(next_word)
-        current = next_word
-    result_seperator = " "
-    result = result_seperator.join(generated)
-    return result
-
-
-def generate_text_pairs(table, length):
-    all_pairs = list(table.keys())
-    current = random.choice(all_pairs)
-    generated = list((current[0], current[1]))
-
-    for i in range(length):
-        if current not in table:
-            current = random.choice(all_pairs)
-        options = list(table[current].keys())
-        weights = list(table[current].values())
-        next_word = random.choices(options, weights=weights)[0]
-        generated.append(next_word)
-        current = (current[1], next_word)
-    result_seperator = " "
-    result = result_seperator.join(generated)
-    return result
-
-
 def generate_text_ngram(table, length):
     all_keys = list(table.keys())
     current = random.choice(all_keys)
@@ -99,3 +34,44 @@ def generate_text_ngram(table, length):
     result_seperator = " "
     result = result_seperator.join(generated)
     return result
+
+
+def generate_text_backoff(tables, max_n, length, min_options=2):
+    all_keys = list(tables[max_n].keys())
+    current = random.choice(all_keys)
+    generated = list(current)
+
+    for i in range(length):
+        picked = None
+        for n in range(max_n, 0, -1):
+            key = tuple(generated[-n:])
+            table = tables[n]
+            if key in table and (len(table[key]) >= min_options or n == 1):
+                options = list(table[key].keys())
+                weights = list(table[key].values())
+                picked = random.choices(options, weights=weights)[0]
+                break
+        if picked is None:
+            single_word_table = tables[1]
+            keys = single_word_table.keys()
+            key_list = list(keys)
+            random_key = random.choice(key_list)
+            picked = random_key[0]
+        generated.append(picked)
+    result_seperator = " "
+    result = result_seperator.join(generated)
+    return result
+
+
+def get_tables(words, max_n):
+    tables = dict()
+    for n in range(1, max_n + 1):
+        tables[n] = build_ngram_counts(words, n)
+    return tables
+
+
+def print_result(words, max_n):
+    result = get_tables(words, max_n)
+    print(len(result[1]))
+    print(len(result[2]))
+    print(len(result[3]))

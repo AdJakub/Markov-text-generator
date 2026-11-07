@@ -1,12 +1,11 @@
 import sys
 
 from markov import (
-    build_follower_counts,
     build_ngram_counts,
-    build_pair_counts,
-    generate_text,
-    generate_text_pairs,
-    generate_text_ngram
+    generate_text_backoff,
+    generate_text_ngram,
+    get_tables,
+    print_result,
 )
 from stats import share_single_options
 from utils import get_book_text, remove_header
@@ -21,14 +20,12 @@ else:
     no_header = remove_header(book_text)
     book_words = no_header.split()
 
-    pair_counts = build_pair_counts(book_words)
-    print(len(pair_counts))
-    print(list(pair_counts)[:5])
-    print(share_single_options(pair_counts))
-    follower_counts = build_follower_counts(book_words)
-    print("--- VERSION A ---")
-    print(generate_text(follower_counts, "The", 20))
-    print("---VERSION B ---")
-    print(generate_text_pairs(pair_counts, 20))
-    print(share_single_options(follower_counts))
-
+    print_result(book_words, 3)
+    tables = get_tables(book_words, 3)
+    print(generate_text_backoff(tables, 3, 30))
+    print(generate_text_backoff(tables, 3, 30))
+    print(generate_text_backoff(tables, 3, 30))
+    # table = build_ngram_counts(book_words, n)
+    # print(f"--- SIZE {n} ---")
+    # print(share_single_options(table))
+    # print(generate_text_ngram(table, 20))
