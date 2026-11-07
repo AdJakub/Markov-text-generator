@@ -2,7 +2,7 @@ import sys
 
 from experiments import print_result, tune_min_options
 from markov import generate_text_backoff, get_tables
-from stats import book_chunks
+from stats import book_chunks, copy_score
 from utils import get_book_text, remove_header
 
 if len(sys.argv) != 2:
@@ -20,4 +20,11 @@ else:
 
     tables = get_tables(book_words, 3)
     text, counts = generate_text_backoff(tables, 3, 30)
+    test_text = """On an exceptionally hot evening early in July a young man came out of
+    the garret in which he lodged in S. Place and walked slowly, as though
+    in hesitation,"""
+    print("--- SANITY TEST ---")
+    print(copy_score(test_text, book_chunk_set, 5))
+    print("--- ACTUAL TEST --- ")
+    print(copy_score(text, book_chunk_set, 5))
     # tune_min_options(tables, range(1, 6), 30)
