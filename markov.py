@@ -40,6 +40,7 @@ def generate_text_backoff(tables, max_n, length, min_options=2):
     all_keys = list(tables[max_n].keys())
     current = random.choice(all_keys)
     generated = list(current)
+    sizes_used = dict()
 
     for i in range(length):
         picked = None
@@ -50,6 +51,9 @@ def generate_text_backoff(tables, max_n, length, min_options=2):
                 options = list(table[key].keys())
                 weights = list(table[key].values())
                 picked = random.choices(options, weights=weights)[0]
+                if n not in sizes_used:
+                    sizes_used[n] = 0
+                sizes_used[n] += 1
                 break
         if picked is None:
             single_word_table = tables[1]
@@ -57,10 +61,13 @@ def generate_text_backoff(tables, max_n, length, min_options=2):
             key_list = list(keys)
             random_key = random.choice(key_list)
             picked = random_key[0]
+            if "jump" not in sizes_used:
+                sizes_used["jump"] = 0
+            sizes_used["jump"] += 1
         generated.append(picked)
     result_seperator = " "
     result = result_seperator.join(generated)
-    return result
+    return result, sizes_used
 
 
 def get_tables(words, max_n):
