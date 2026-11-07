@@ -6,6 +6,7 @@ from markov import (
     generate_text,
     generate_text_pairs,
 )
+from stats import share_single_options
 from utils import get_book_text, remove_header
 
 if len(sys.argv) != 2:
@@ -21,9 +22,10 @@ else:
     pair_counts = build_pair_counts(book_words)
     print(len(pair_counts))
     print(list(pair_counts)[:5])
-
+    print(share_single_options(pair_counts))
     follower_counts = build_follower_counts(book_words)
     print("--- VERSION A ---")
     print(generate_text(follower_counts, "The", 20))
     print("---VERSION B ---")
     print(generate_text_pairs(pair_counts, 20))
+    print(share_single_options(follower_counts))
