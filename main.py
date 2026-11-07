@@ -2,9 +2,11 @@ import sys
 
 from markov import (
     build_follower_counts,
+    build_ngram_counts,
     build_pair_counts,
     generate_text,
     generate_text_pairs,
+    generate_text_ngram
 )
 from stats import share_single_options
 from utils import get_book_text, remove_header
@@ -29,3 +31,4 @@ else:
     print("---VERSION B ---")
     print(generate_text_pairs(pair_counts, 20))
     print(share_single_options(follower_counts))
+
