@@ -1,6 +1,6 @@
 # Markov chain generator
 
-[![forthebadge](/badges/0-percent-optimized.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/badges/0-percent-optimized.svg)](https://forthebadge.com)
 ![Hackatime stats](https://hackatime.hackclub.com/api/v1/badge/U0A4QT7PB5K/AdJakub/bookbot)
 
 A command-line Markov chain text generator, that learnsf rom a book and writes new text in its style.
