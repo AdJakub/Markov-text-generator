@@ -6,7 +6,7 @@ from stats import book_chunks, copy_score
 from utils import clean_text, get_book_text, remove_header
 
 parser = argparse.ArgumentParser()
-parser.add_argument("book", help="file name of the book in books/")
+parser.add_argument("book", nargs="+", help="file name of the book in books/")
 parser.add_argument("--length", type=int, default=30, help="How many words to generate")
 parser.add_argument(
     "--max-n",
@@ -40,14 +40,13 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-
-book_name = args.book
-book_path = f"books/{book_name}"
-
-book_text = get_book_text(book_path)
-no_header = remove_header(book_text)
-cleaned = clean_text(no_header)
-book_words = cleaned.split()
+book_words = list()
+for book_name in args.book:
+    book_path = f"books/{book_name}"
+    book_text = get_book_text(book_path)
+    no_header = remove_header(book_text)
+    cleaned = clean_text(no_header)
+    book_words.extend(cleaned.split())
 
 
 tables = get_tables(book_words, args.max_n)
