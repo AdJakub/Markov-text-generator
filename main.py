@@ -7,7 +7,7 @@ from storage import load_tables, save_tables
 from utils import clean_text, get_book_text, remove_header
 
 parser = argparse.ArgumentParser()
-parser.add_argument("book", nargs="+", help="file name of the book in books/")
+parser.add_argument("book", nargs="*", help="file name of the book in books/")
 parser.add_argument("--length", type=int, default=30, help="How many words to generate")
 parser.add_argument(
     "--max-n",
@@ -39,28 +39,49 @@ parser.add_argument(
     action="store_true",
     help="Show how much of each text is copied from the source material",
 )
+parser.add_argument("--save", help="Save the tables to this JSON file")
+parser.add_argument(
+    "--load", help="load tables from this JSON file instead of reading books"
+)
 args = parser.parse_args()
 
-book_words = list()
-for book_name in args.book:
-    book_path = f"books/{book_name}"
-    book_text = get_book_text(book_path)
-    no_header = remove_header(book_text)
-    cleaned = clean_text(no_header)
-    book_words.extend(cleaned.split())
+if not args.book and args.load is None:
+    parser.error("Give atleast one book or --load FILE")
+if args.book and args.load:
+    parser.error("Use either books or --load, not both")
+if args.load and (args.score or args.experiment):
+    parser.error("--score and --experiment need the book text not just tables")
+if args.load:
+    try:
+        tables = load_tables(args.load)
+    except FileNotFoundError:
+        parser.error(f"file {args.load} not found")
+else:
+    book_words = list()
+
+    for book_name in args.book:
+        book_path = f"books/{book_name}"
+        try:
+            book_text = get_book_text(book_path)
+        except FileNotFoundError:
+            parser.error(f"Book {book_name} not found")
+        no_header = remove_header(book_text)
+        cleaned = clean_text(no_header)
+        book_words.extend(cleaned.split())
+
+    tables = get_tables(book_words, args.max_n)
+max_n = len(tables)
+if args.save:
+    save_tables(tables, args.save)
 
 
-tables = get_tables(book_words, args.max_n)
-save_tables(tables, "tables.json")
-loaded_tables = load_tables("tables.json")
-print(loaded_tables == tables)
 if args.score or args.experiment:
     book_chunk_set = book_chunks(book_words, 5)
 
 for _ in range(args.count):
     text, counts = generate_text_backoff(
         tables,
-        args.max_n,
+        max_n,
         args.length,
         min_options=args.min_options,
         sentences=not args.override_sentences,
