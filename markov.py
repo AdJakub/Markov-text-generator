@@ -36,13 +36,24 @@ def generate_text_ngram(table, length):
     return result
 
 
-def generate_text_backoff(tables, max_n, length, min_options=2):
+def generate_text_backoff(tables, max_n, length, min_options=2, sentences=True):
     all_keys = list(tables[max_n].keys())
-    current = random.choice(all_keys)
+    start_keys = list()
+    for key in all_keys:
+        if key[0][0].isupper():
+            start_keys.append(key)
+    if len(start_keys) == 0:
+        start_keys = all_keys
+    if sentences == False:
+        start_keys = all_keys
+    current = random.choice(start_keys)
     generated = list(current)
     sizes_used = dict()
-
-    for i in range(length):
+    if sentences == True:
+        max_rounds = length * 3
+    else:
+        max_rounds = length
+    for i in range(max_rounds):
         picked = None
         for n in range(max_n, 0, -1):
             key = tuple(generated[-n:])
@@ -65,6 +76,8 @@ def generate_text_backoff(tables, max_n, length, min_options=2):
                 sizes_used["jump"] = 0
             sizes_used["jump"] += 1
         generated.append(picked)
+        if sentences and i + 1 >= length and generated[-1].endswith((".", "!", "?")):
+            break
     result_seperator = " "
     result = result_seperator.join(generated)
     return result, sizes_used

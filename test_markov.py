@@ -27,8 +27,8 @@ def test_backoff_length():
     tables = get_tables(words, 2)
     generated, counts = generate_text_backoff(tables, 2, 10)
     generated_words = generated.split()
-    assert len(generated_words) == 12
-    assert sum(counts.values()) == 10
+    assert len(generated_words) >= 12
+    assert sum(counts.values()) >= 10
 
 
 def test_copy_score_too_short():
@@ -37,3 +37,25 @@ def test_copy_score_too_short():
 
     score = copy_score(test_sentence, chunks, k=3)
     assert score == 0.0
+
+
+sentence_text = "The cat sat on the mat. The dog ate the fish. A bird sang loudly! Did the cat sleep? The dog barked at the bird."
+sentence_words = sentence_text.split()
+
+
+def test_ends_with_sentence_end():
+    tables = get_tables(sentence_words, 2)
+    for _ in range(20):
+        text, counts = generate_text_backoff(tables, 2, 5)
+        results = text.split()
+        assert results[-1].endswith((".", "!", "?")) or len(results) - 2 == 5 * 3, (
+            results
+        )
+
+
+def test_starts_with_capital():
+    tables = get_tables(sentence_words, 2)
+    for _ in range(20):
+        text, counts = generate_text_backoff(tables, 2, 5)
+        results = text.split()
+        assert results[0][0].isupper() == True, results
