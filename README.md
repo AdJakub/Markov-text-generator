@@ -24,13 +24,15 @@ Put a plain-text book from [Project Gutenberg](https://www.gutenberg.org) in the
 python3 main.py <book_file> [options]
 ```
 
-| Option          | Default | Description                                                                                    |
-| --------------- | ------- | ---------------------------------------------------------------------------------------------- |
-| `--length`      | 30      | How many words to generate                                                                     |
-| `--max-n`       | 3       | Biggest memory size (n-gram order)                                                             |
-| `--min-options` | 2       | Backoff threshold: minimum number of possible next words before falling back to shorter memory |
-| `--count`       | 1       | How many texts to generate                                                                     |
-| `--experiment`  | off     | Run the copy-score tests and the min_options experiment                                        |
+| Option                 | Default | Description                                                                                    |
+| ---------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `--length`             | 30      | How many words to generate                                                                     |
+| `--max-n`              | 3       | Biggest memory size (n-gram order)                                                             |
+| `--min-options`        | 2       | Backoff threshold: minimum number of possible next words before falling back to shorter memory |
+| `--count`              | 1       | How many texts to generate                                                                     |
+| `--experiment`         | off     | Run the copy-score tests and the min_options experiment                                        |
+| `--override-sentences` | off     | Don't force texts to start with a capital letter and end with . ! or ?                         |
+| `--score`              | off     | Show how much of each text is copied word for word from the source material                    |
 
 ### Examples
 
@@ -86,6 +88,15 @@ and went in. He looked carefully and exactly what the doctor says!” Katerina I
 “but what help the habit he said this with some other general’s.... Only just getting home in my opinions.... You know my opinion, and describing a change it, the business, and then to
 ```
 
+```bash
+ python3 main.py crimeandpunishment.txt --score
+```
+
+```bash
+After brief hesitation at the police office? Where’s the greatest suspicion of any folly.” They simply looked rather irregular for that moment when he stood with the axe in the noose, he tried to hang himself, and that I did not ask forgiveness, but he was in a fever of dust of the street.
+copied: 18%
+```
+
 ## Results
 
 Tested on _Crime and Punishment_ (about 200k words).
@@ -110,10 +121,25 @@ Tested on _Crime and Punishment_ (about 200k words).
 
 backoff cuts the copying form 91% to about 7.5. above 2 copying barely drops and the text gets more mashed up. thats why 2 is the default
 
+## Running tests
+
+- Create and activate a .venv
+- install pytest
+- run pytest
+  Thet ests cover tables, copy score, header removal, cleaning and sentence boundiaries
+
+## Known Limitations
+
+- Sentence ends inside quotes like "Good-bye!" arent recognised as sentence ends
+- a sentence start is detected by a capital letter so names in the middle of a sentence can also be piocked as starts
+- in rare cases no sentence end is found within the limit and the program prints a warning
+- for text without capitals or punctuation like chats use --override-sentences
+
 ## Roadmap
 
 - Generating text from other data sources like JSON
 - Cleaning the source text depending on the type
+- Saving tables to a file
 
 ## Credits
 

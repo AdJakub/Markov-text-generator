@@ -3,7 +3,7 @@ import argparse
 from experiments import print_result, tune_min_options
 from markov import generate_text_backoff, get_tables
 from stats import book_chunks, copy_score
-from utils import get_book_text, remove_header
+from utils import clean_text, get_book_text, remove_header
 
 parser = argparse.ArgumentParser()
 parser.add_argument("book", help="file name of the book in books/")
@@ -33,6 +33,11 @@ parser.add_argument(
     action="store_true",
     help="don't force texts to start with a capital and end with . ! or ?",
 )
+parser.add_argument(
+    "--score",
+    action="store_true",
+    help="Show how much of each text is copied from the source material",
+)
 args = parser.parse_args()
 
 
@@ -41,10 +46,14 @@ book_path = f"books/{book_name}"
 
 book_text = get_book_text(book_path)
 no_header = remove_header(book_text)
-book_words = no_header.split()
+cleaned = clean_text(no_header)
+book_words = cleaned.split()
 
 
 tables = get_tables(book_words, args.max_n)
+if args.score or args.experiment:
+    book_chunk_set = book_chunks(book_words, 5)
+
 for _ in range(args.count):
     text, counts = generate_text_backoff(
         tables,
@@ -53,14 +62,17 @@ for _ in range(args.count):
         min_options=args.min_options,
         sentences=not args.override_sentences,
     )
+    print(text)
     if not args.override_sentences and text[-1].endswith((".", "!", "?")) == False:
         print(
             "Error! Couldn't generate text ending with a sentence ending mark. Try again, or run with --override-sentences"
         )
         print("-------------")
-    print(text)
+    if args.score:
+        score = copy_score(text, book_chunk_set, 5)
+        percent = round(score * 100)
+        print(f"copied: {percent}%")
 if args.experiment:
-    book_chunk_set = book_chunks(book_words, 5)
     print(len(book_chunk_set))
     print(len(book_words))
     test_text = """On an exceptionally hot evening early in July a young man came out of
