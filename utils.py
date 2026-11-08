@@ -15,3 +15,16 @@ def remove_header(text):
 def get_book_text(path):
     with open(path) as f:
         return f.read()
+
+
+def clean_text(text):
+    lines = text.splitlines()
+    kept = list()
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("CHAPTER") or stripped.startswith("PART"):
+            continue
+        kept.append(stripped)
+    result = "\n".join(kept)
+    no_april_underscores = result.replace("_", "")
+    return no_april_underscores
