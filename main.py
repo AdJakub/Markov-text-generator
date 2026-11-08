@@ -28,6 +28,11 @@ parser.add_argument(
     action="store_true",
     help="run the copy-score tests and the min_options experiment",
 )
+parser.add_argument(
+    "--override-sentences",
+    action="store_true",
+    help="don't force texts to start with a capital and end with . ! or ?",
+)
 args = parser.parse_args()
 
 
@@ -42,8 +47,17 @@ book_words = no_header.split()
 tables = get_tables(book_words, args.max_n)
 for _ in range(args.count):
     text, counts = generate_text_backoff(
-        tables, args.max_n, args.length, min_options=args.min_options
+        tables,
+        args.max_n,
+        args.length,
+        min_options=args.min_options,
+        sentences=not args.override_sentences,
     )
+    if not args.override_sentences and text[-1].endswith((".", "!", "?")) == False:
+        print(
+            "Error! Couldn't generate text ending with a sentence ending mark. Try again, or run with --override-sentences"
+        )
+        print("-------------")
     print(text)
 if args.experiment:
     book_chunk_set = book_chunks(book_words, 5)
