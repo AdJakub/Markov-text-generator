@@ -3,6 +3,7 @@ import argparse
 from experiments import print_result, tune_min_options
 from markov import generate_text_backoff, get_tables
 from stats import book_chunks, copy_score
+from storage import load_tables, save_tables
 from utils import clean_text, get_book_text, remove_header
 
 parser = argparse.ArgumentParser()
@@ -50,6 +51,9 @@ for book_name in args.book:
 
 
 tables = get_tables(book_words, args.max_n)
+save_tables(tables, "tables.json")
+loaded_tables = load_tables("tables.json")
+print(loaded_tables == tables)
 if args.score or args.experiment:
     book_chunk_set = book_chunks(book_words, 5)
 
