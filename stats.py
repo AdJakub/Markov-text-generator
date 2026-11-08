@@ -25,4 +25,6 @@ def copy_score(text, chunk_set, k):
         all_chunks += 1
         if chunk in chunk_set:
             found_chunk += 1
+    if all_chunks == 0:
+        return 0.0
     return found_chunk / all_chunks

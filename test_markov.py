@@ -29,3 +29,11 @@ def test_backoff_length():
     generated_words = generated.split()
     assert len(generated_words) == 12
     assert sum(counts.values()) == 10
+
+
+def test_copy_score_too_short():
+    test_sentence = "the cat"
+    chunks = book_chunks(words, k=3)
+
+    score = copy_score(test_sentence, chunks, k=3)
+    assert score == 0.0
