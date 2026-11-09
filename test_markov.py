@@ -71,3 +71,19 @@ def test_message_boundaries():
     tables = get_tables_from_texts(texts, 1)
     assert tables[1][("a",)] == {"b": 1}
     assert ("c",) not in tables[1]
+
+
+def test_start_word():
+    tables = get_tables(sentence_words, 2)
+    for _ in range(20):
+        text, count = generate_text_backoff(tables, 2, 5, start_word="dog")
+        result = text.split()
+        assert result[0] == "dog"
+
+
+def test_start_word_unknown():
+    tables = get_tables(sentence_words, 2)
+    for _ in range(20):
+        text, count = generate_text_backoff(tables, 2, 5, start_word="zebra")
+        result = text.split()
+        assert len(result) > 0

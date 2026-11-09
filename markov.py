@@ -39,7 +39,9 @@ def generate_text_ngram(table, length):
     return result
 
 
-def generate_text_backoff(tables, max_n, length, min_options=2, sentences=True):
+def generate_text_backoff(
+    tables, max_n, length, min_options=2, sentences=True, start_word=None
+):
     all_keys = list(tables[max_n].keys())
     start_keys = list()
     for key in all_keys:
@@ -49,6 +51,13 @@ def generate_text_backoff(tables, max_n, length, min_options=2, sentences=True):
         start_keys = all_keys
     if sentences == False:
         start_keys = all_keys
+    if start_word != None:
+        matching = list()
+        for key in all_keys:
+            if key[0] == start_word:
+                matching.append(key)
+        if len(matching) > 0:
+            start_keys = matching
     current = random.choice(start_keys)
     generated = list(current)
     sizes_used = dict()
