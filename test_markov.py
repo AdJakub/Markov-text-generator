@@ -1,4 +1,9 @@
-from markov import build_ngram_counts, generate_text_backoff, get_tables
+from markov import (
+    build_ngram_counts,
+    generate_text_backoff,
+    get_tables,
+    get_tables_from_texts,
+)
 from stats import book_chunks, copy_score
 
 text = "the cat sat on the mat. the cat ate the fish. the dog sat on the cat."
@@ -59,3 +64,10 @@ def test_starts_with_capital():
         text, counts = generate_text_backoff(tables, 2, 5)
         results = text.split()
         assert results[0][0].isupper() == True, results
+
+
+def test_message_boundaries():
+    texts = [["a", "b", "c"], ["d", "e", "f"]]
+    tables = get_tables_from_texts(texts, 1)
+    assert tables[1][("a",)] == {"b": 1}
+    assert ("c",) not in tables[1]

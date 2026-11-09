@@ -2,8 +2,11 @@ import random
 
 
 #  build the table
-def build_ngram_counts(words, n):
-    ngram_counts = {}
+def build_ngram_counts(words, n, counts=None):
+    if counts == None:
+        ngram_counts = {}
+    else:
+        ngram_counts = counts
     for i in range(0, len(words) - n):
         current_key = tuple(words[i : i + n])
         next_word = words[i + n]
@@ -87,6 +90,16 @@ def get_tables(words, max_n):
     tables = dict()
     for n in range(1, max_n + 1):
         tables[n] = build_ngram_counts(words, n)
+    return tables
+
+
+def get_tables_from_texts(texts, max_n):
+    tables = dict()
+    for n in range(1, max_n + 1):
+        tables[n] = dict()
+    for words in texts:
+        for n in range(1, max_n + 1):
+            build_ngram_counts(words, n, tables[n])
     return tables
 
 
