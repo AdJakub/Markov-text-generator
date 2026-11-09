@@ -3,7 +3,7 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "markovka"
-version = "0.1.0"
+version = "0.2.0"
 description = "Markov chain text generator with option of importing messenger chats and books as source material."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -11,3 +11,5 @@ requires-python = ">=3.10"
 markovka = "markovka.main:main"
 [tool.setuptools]
 packages = ["markovka"]
+[project.gui-scripts]
+markovka-gui = "markovka.gui:main"
