@@ -1,5 +1,6 @@
 import argparse
 
+from chat import load_chat_messages
 from experiments import print_result, tune_min_options
 from markov import generate_text_backoff, get_tables
 from stats import book_chunks, copy_score
@@ -43,11 +44,19 @@ parser.add_argument("--save", help="Save the tables to this JSON file")
 parser.add_argument(
     "--load", help="load tables from this JSON file instead of reading books"
 )
+parser.add_argument("--chat", nargs="+", help="one or more chat export files in chats/")
+parser.add_argument(
+    "--sender", help="whose messages to learn from (exact name as in the export"
+)
 args = parser.parse_args()
+if not args.book and args.load is None and args.chat is None:
+    parser.error("Give atleast one book, --chat FILES or --load FILE")
+if args.chat and args.sender is None:
+    parser.error("--chat needs --sender NAME")
+if args.sender and args.chat is None:
+    parser.error("Did you mean --chat?")
 
-if not args.book and args.load is None:
-    parser.error("Give atleast one book or --load FILE")
-if args.book and args.load:
+if args.load and (args.book or args.chat):
     parser.error("Use either books or --load, not both")
 if args.load and (args.score or args.experiment):
     parser.error("--score and --experiment need the book text not just tables")
@@ -68,7 +77,13 @@ else:
         no_header = remove_header(book_text)
         cleaned = clean_text(no_header)
         book_words.extend(cleaned.split())
-
+    if args.chat:
+        for chat_name in args.chat:
+            chat_path = f"chats/{chat_name}"
+            chat_messages = load_chat_messages(chat_path, args.sender)
+            print(f"{chat_path}: {len(chat_messages)} messages")
+            for message in chat_messages:
+                book_words.extend(message.split())
     tables = get_tables(book_words, args.max_n)
 max_n = len(tables)
 if args.save:
