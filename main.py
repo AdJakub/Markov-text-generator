@@ -2,7 +2,7 @@ import argparse
 
 from chat import load_chat_messages
 from experiments import print_result, tune_min_options
-from markov import generate_text_backoff, get_tables
+from markov import generate_text_backoff, get_tables, get_tables_from_texts
 from stats import book_chunks, copy_score
 from storage import load_tables, save_tables
 from utils import clean_text, get_book_text, remove_header
@@ -67,7 +67,7 @@ if args.load:
         parser.error(f"file {args.load} not found")
 else:
     book_words = list()
-
+    texts = list()
     for book_name in args.book:
         book_path = f"books/{book_name}"
         try:
@@ -77,14 +77,15 @@ else:
         no_header = remove_header(book_text)
         cleaned = clean_text(no_header)
         book_words.extend(cleaned.split())
+        texts.append(cleaned.split())
     if args.chat:
         for chat_name in args.chat:
             chat_path = f"chats/{chat_name}"
             chat_messages = load_chat_messages(chat_path, args.sender)
-            print(f"{chat_path}: {len(chat_messages)} messages")
             for message in chat_messages:
                 book_words.extend(message.split())
-    tables = get_tables(book_words, args.max_n)
+                texts.append(message.split())
+    tables = get_tables_from_texts(texts, args.max_n)
 max_n = len(tables)
 if args.save:
     save_tables(tables, args.save)
