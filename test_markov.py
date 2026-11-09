@@ -3,6 +3,7 @@ from markov import (
     generate_text_backoff,
     get_tables,
     get_tables_from_texts,
+    normalize,
 )
 from stats import book_chunks, copy_score
 
@@ -87,3 +88,14 @@ def test_start_word_unknown():
         text, count = generate_text_backoff(tables, 2, 5, start_word="zebra")
         result = text.split()
         assert len(result) > 0
+
+
+def test_normalize():
+    text = "Piwo?"
+    text2 = "piwo"
+    text3 = "...Dog!"
+    expected = "piwo"
+    expected2 = "dog"
+    assert normalize(text) == expected
+    assert normalize(text2) == expected
+    assert normalize(text3) == expected2

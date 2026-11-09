@@ -2,7 +2,7 @@ import argparse
 
 from chat import load_chat_messages
 from experiments import print_result, tune_min_options
-from markov import generate_text_backoff, get_tables, get_tables_from_texts
+from markov import generate_text_backoff, get_tables, get_tables_from_texts, normalize
 from stats import book_chunks, copy_score
 from storage import load_tables, save_tables
 from utils import clean_text, get_book_text, remove_header
@@ -102,6 +102,9 @@ if args.score or args.experiment:
     book_chunk_set = book_chunks(book_words, args.score_k)
     score_sum = 0
 if args.talk:
+    known = set()
+    for key in tables[max_n]:
+        known.add(normalize(key[0]))
     while True:
         try:
             user = input("you: ")
@@ -110,12 +113,21 @@ if args.talk:
             break
         if user == "/quit":
             break
+        candidates = list()
+        for word in user.split():
+            if normalize(word) in known:
+                candidates.append(word)
+        if not candidates:
+            start = None
+        else:
+            start = max(candidates, key=len)
         text, counts = generate_text_backoff(
             tables,
             max_n,
             args.length,
             min_options=args.min_options,
             sentences=not args.override_sentences,
+            start_word=start,
         )
         print(f"bot: {text}")
 else:

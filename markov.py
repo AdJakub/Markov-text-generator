@@ -117,3 +117,9 @@ def print_result(words, max_n):
     print(len(result[1]))
     print(len(result[2]))
     print(len(result[3]))
+
+
+def normalize(word):
+    lowercase = word.lower()
+    stripped = lowercase.strip(".,!?")
+    return stripped
