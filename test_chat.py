@@ -1,6 +1,6 @@
 import json
 
-from chat import fix_encoding, load_chat_messages
+from markovka.chat import fix_encoding, load_chat_messages
 
 
 def test_fix_encoding_name():

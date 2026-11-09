@@ -1,5 +1,5 @@
-from markov import get_tables
-from storage import load_tables, save_tables
+from markovka.markov import get_tables
+from markovka.storage import load_tables, save_tables
 
 test_sentence = "the cat sat on the mat. the cat ate the fish. the dog sat on the cat."
 test_sentence_PL = "Pchnąć w tę łódź jeża lub ośm skrzyń fig."

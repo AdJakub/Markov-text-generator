@@ -1,11 +1,11 @@
-from markov import (
+from markovka.markov import (
     build_ngram_counts,
     generate_text_backoff,
     get_tables,
     get_tables_from_texts,
     normalize,
 )
-from stats import book_chunks, copy_score
+from markovka.stats import book_chunks, copy_score
 
 text = "the cat sat on the mat. the cat ate the fish. the dog sat on the cat."
 words = text.split()

@@ -1,4 +1,4 @@
-from utils import clean_text, remove_header
+from markovka.utils import clean_text, remove_header
 
 
 def test_text_without_markets():

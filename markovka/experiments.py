@@ -1,10 +1,10 @@
-from markov import (
+from markovka.markov import (
     build_ngram_counts,
     generate_text_backoff,
     generate_text_ngram,
     get_tables,
 )
-from stats import copy_score, share_single_options
+from markovka.stats import copy_score, share_single_options
 
 
 def print_result(words, max_n):

@@ -1,11 +1,16 @@
 import argparse
 
-from chat import load_chat_messages
-from experiments import print_result, tune_min_options
-from markov import generate_text_backoff, get_tables, get_tables_from_texts, normalize
-from stats import book_chunks, copy_score
-from storage import load_tables, save_tables
-from utils import clean_text, get_book_text, remove_header
+from markovka.chat import load_chat_messages
+from markovka.experiments import print_result, tune_min_options
+from markovka.markov import (
+    generate_text_backoff,
+    get_tables,
+    get_tables_from_texts,
+    normalize,
+)
+from markovka.stats import book_chunks, copy_score
+from markovka.storage import load_tables, save_tables
+from markovka.utils import clean_text, get_book_text, remove_header
 
 
 def main():
