@@ -14,7 +14,7 @@ parser.add_argument(
     "--max-n",
     type=int,
     default=3,
-    help="Biggest memory size (order of markov chain) (not stable above 3)",
+    help="Biggest memory size (order of markov chain). 3 is default and best for books. try 2 for chats.",
 )
 parser.add_argument(
     "--min-options",
@@ -22,9 +22,7 @@ parser.add_argument(
     default=2,
     help="best leave at default, copies the source text at 1 and is more gibberish at more than 2",
 )
-parser.add_argument(
-    "--count", type=int, default=1, help="Ammount of sentences to generate"
-)
+parser.add_argument("--count", type=int, default=1, help="Amount of texts to generate")
 parser.add_argument(
     "--experiment",
     action="store_true",
@@ -46,18 +44,18 @@ parser.add_argument(
 )
 parser.add_argument("--chat", nargs="+", help="one or more chat export files in chats/")
 parser.add_argument(
-    "--sender", help="whose messages to learn from (exact name as in the export"
+    "--sender", help="whose messages to learn from (exact name as in the export)"
 )
 parser.add_argument(
     "--score-k",
     type=int,
-    default="5",
+    default=5,
     help="How many words in a row count as copied, try 3 for chats",
 )
 parser.add_argument("--talk", action="store_true", help="talk with the generator!")
 args = parser.parse_args()
 if not args.book and args.load is None and args.chat is None:
-    parser.error("Give atleast one book, --chat FILES or --load FILE")
+    parser.error("Give at least one book, --chat FILES or --load FILE")
 if args.chat and args.sender is None:
     parser.error("--chat needs --sender NAME")
 if args.sender and args.chat is None:
