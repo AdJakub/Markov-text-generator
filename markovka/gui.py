@@ -23,7 +23,8 @@ def main():
             output_box.delete("1.0", "end")
             output_box.insert("end", "Choose a book first!")
             return
-        text, counts = generate_text_backoff(tables, max_n, 30)
+        length = int(length_box.get())
+        text, counts = generate_text_backoff(tables, max_n, length)
         output_box.delete("1.0", "end")
         output_box.insert("end", text)
 
@@ -44,6 +45,9 @@ def main():
     button = ttk.Button(root, text="Generate", command=generate)
     button.pack(padx=10, pady=10)
     choose_button.pack()
+    length_box = ttk.Spinbox(root, from_=5, to=300)
+    length_box.set(30)
+    length_box.pack()
     root.mainloop()
 
 
